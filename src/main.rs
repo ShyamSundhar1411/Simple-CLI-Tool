@@ -1,12 +1,17 @@
 use  clap::Parser;
 
-#[derive(Parser)]
+#[derive(Parser, Debug)]
 struct Cli{
+    // Pattern to match in the file
+    #[arg(short,long)]
     pattern: String,
-    path: std::path::PathBuf,
+
+    // Path of the File
+    #[arg(short,long)]
+    file: std::path::PathBuf,
 }
 fn main() {
     let args = Cli::parse();
     println!("{}",args.pattern);
-    println!("{}",args.path.display());
+    println!("{}",args.file.display());
 }
