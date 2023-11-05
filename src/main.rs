@@ -1,37 +1,23 @@
-use  clap::Parser;
 use std::fs::File;
+use dialoguer::{FuzzySelect, Input};
 use std::fs::read_to_string;
 use std::io::Write;
-#[derive(Parser, Debug)]
-struct Cli{
-    // Pattern to match in the file
-    #[arg(short,long)]
-    pattern: String,
 
-    // Path of the File
-    #[arg(short,long)]
-    file: std::path::PathBuf,
-    
-    // Mode of the file
-    #[arg(short, long, default_value_t = String::from("r"))]
-    mode: String,
-}
+
 fn main() {
-    let args = Cli::parse();
-    let file_name = args.file;
-    let data = args.pattern;
-    let mode = args.mode;
-    
-    if mode == "r"{
-        let lines = read_to_string(file_name).expect("Cannot Read file");
-        println!("{}",lines);
+    let modes = vec!["read","write"];
+    let selection = FuzzySelect::new().with_prompt("What do you choose: ").items(&modes).interact().unwrap();
+    let selected_mode = modes[selection];
+    let file_name = Input::<String>::new().with_prompt("File Name: ").interact_text().unwrap();
+    if selected_mode == "read"{
+        let data = read_to_string(file_name).expect("Cannot open file");
+        println!("{}",data);
     }
-    else if mode == "w"{
-        let mut data_file = File::create(file_name).expect("Creation Failed");
-        data_file.write(data.as_bytes()).expect("Write Failed");
-        println!("Created file succesfully");
-    }
-    else{
-        panic!("Invalid mode specified");
+    else if selected_mode == "write"{
+        let temp_name = &file_name;
+        let data_to_write = Input::<String>::new().with_prompt("Enter the data to be written: ").interact_text().unwrap();
+        let mut temp_file = File::create(temp_name).expect("Error creating file");
+        temp_file.write(data_to_write.as_bytes()).expect("Writing Failed");
+        println!("Created a file {}",temp_name);
     }
 }
