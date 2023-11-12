@@ -20,4 +20,9 @@ fn main() {
         temp_file.write(data_to_write.as_bytes()).expect("Writing Failed");
         println!("Created a file {}",temp_name);
     }
+    hello_world();
+}
+
+fn hello_world(){
+    println!("Hello World");
 }
